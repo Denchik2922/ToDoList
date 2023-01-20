@@ -1,20 +1,30 @@
-﻿using Microsoft.OpenApi.Models;
-
-namespace ToDoList
+﻿namespace ToDoList
 {
+	using DAL;
+	using Microsoft.EntityFrameworkCore;
+	using Microsoft.OpenApi.Models;
+
 	public class Startup
 	{
+		public string DBConnectionString { get; }
+		public IConfiguration Configuration { get; }
+
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
-		}
 
-		public IConfiguration Configuration { get; }
+			if(Configuration["ConnectionString:ToDoListDB"] == null)
+			{
+				throw new NullReferenceException("ConnectionString is null!");
+			}
+
+			this.DBConnectionString = Configuration["ConnectionString:ToDoListDB"];
+		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-
+			services.AddDbContext<ToDoListContext>(opts => opts.UseSqlServer(DBConnectionString));
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
 			{
