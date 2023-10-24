@@ -1,6 +1,11 @@
 ﻿namespace ToDoList
 {
-	using DAL;
+    using BLL.ControlOfTransactions;
+    using BLL.Repositories;
+    using BLL.Repositories.Interfaces;
+    using BLL.Services;
+    using BLL.Services.Interfaces;
+    using DAL;
 	using Microsoft.EntityFrameworkCore;
 	using Microsoft.OpenApi.Models;
 
@@ -25,7 +30,10 @@
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDbContext<ToDoListContext>(opts => opts.UseSqlServer(DBConnectionString));
-			services.AddControllers();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IToDoListService, ToDoListService>();
+            services.AddControllers();
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDoList", Version = "v1" });
